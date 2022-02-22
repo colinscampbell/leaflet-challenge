@@ -86,12 +86,33 @@ var myMap = L.map("map", {
 
     var overlayMaps = {
       Earthquakes: earthquakeLayer,
-      Tectonics: plateLayer
+      //Tectonics: plateLayer
     };
 
     L.control.layers(baseMaps, overlayMaps, {
       collapsed: false
     }).addTo(myMap);
 
+
+    var legend = L.control({position: 'bottomright'});
+    legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend');
+    labels = ['<strong>Categories</strong>'],
+    categories = ['Road Surface','Signage','Line Markings','Roadside Hazards','Other'];
+
+    for (var i = 0; i < categories.length; i++) {
+
+            div.innerHTML += 
+            labels.push(
+                '<i class="square" style="background:' + "Red" + '"></i> ' +
+            (categories[i] ? categories[i] : '+'));
+
+        }
+        div.innerHTML = labels.join('<br>');
+    return div;
+    };
+
+    legend.addTo(myMap);
   });
 
