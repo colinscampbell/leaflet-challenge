@@ -1,20 +1,12 @@
-// Look at Mapping Web - Lesson 2 (Saturday)
-// Creating the map object
 var myMap = L.map("map", {
     center: [40, -90],
     zoom: 4.5
   });
   
-  // Adding the tile layer
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(myMap);
-  
-
-
-  // Use this link to get the GeoJSON data.
-  var link = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-01-02";
-  
+   
   function dotColor(depth) {
     if(depth < 10) {
       return "lime";
@@ -35,9 +27,8 @@ var myMap = L.map("map", {
 
   }
 
-//10,30,50,70,90
+  var link = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-01-02";
 
-  // Getting our GeoJSON data
   d3.json(link).then(function(data) {
 
     let coordsArray = []
@@ -62,22 +53,38 @@ var myMap = L.map("map", {
             radius: magnitude*10000,
             fill: true,
             fillColor: dotColor(coordinate[2]),
-            weight: .5
+            weight: .5,
+            fillOpacity: .8
             }).bindPopup(`<h4><ul><li>Name: ${title}</li><li>Magnitude: ${magnitude}</li><li>Location: [${coordinate[1]} , ${coordinate[0]}]</li></ul></h4>`)
         );
-        //append(FeaturesArray, iterable[i])
 
     }
-
-    console.log(coordsArray[2])
-    console.log(magnitudeArray[2])
-    console.log(titleArray[2])
 
     var earthquakeLayer = L.layerGroup(earthquakeMarkers);
 
     earthquakeLayer.addTo(myMap);
 
-    //L.geoJson(data).addTo(myMap);
+    var street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    })
+
+    var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+    });
+
+    var baseMaps = {
+      "Street Map": street,
+      "Topographic Map": topo
+    };
+  
+    // Create an overlay object to hold our overlay.
+    var overlayMaps = {
+      Earthquakes: earthquakeLayer
+    };
+
+    L.control.layers(baseMaps, overlayMaps, {
+      collapsed: false
+    }).addTo(myMap);
 
   });
 
