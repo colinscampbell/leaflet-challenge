@@ -78,8 +78,15 @@ var myMap = L.map("map", {
     };
   
     // Create an overlay object to hold our overlay.
+    d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json").then(function(importedData) {
+      // console.log(importedData);
+      var plateData = importedData;
+      var plateLayer = L.layerGroup(plateData);
+    });
+
     var overlayMaps = {
-      Earthquakes: earthquakeLayer
+      Earthquakes: earthquakeLayer,
+      Tectonics: plateLayer
     };
 
     L.control.layers(baseMaps, overlayMaps, {
